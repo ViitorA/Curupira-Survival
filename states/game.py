@@ -26,7 +26,7 @@ def update_scenario():
     global delta_t
 
     for object in objects.objects_list:
-        if object["TYPE"] == "FIREBALL":
+        if object["TYPE"] == "FIREBALL" or object["TYPE"] == "BULLET":
             object["X"] += object["DIR_X"] * object["SPEED"] * delta_t
             object["Y"] += object["DIR_Y"] * object["SPEED"] * delta_t
 
@@ -50,6 +50,8 @@ def draw_scenario():
             object["SPRITE"].draw()
         elif object["TYPE"] == "XP":
             object["SPRITE"].update()
+            object["SPRITE"].draw()
+        else:
             object["SPRITE"].draw()
 
     for enemy in enemies.enemies_list: # TODO: Ajeitar inversão do sprite
@@ -140,6 +142,7 @@ def run():
     globals.HIT_SOUND = Sound("assets/audio/hit.wav")
     globals.XP_SOUND = Sound("assets/audio/xp.wav")
 
+    a = True
     while True:
         delta_t = WINDOW.delta_time()
 
@@ -151,7 +154,11 @@ def run():
         player.input(KEYBOARD, MOUSE)
         utils.draw_background(WINDOW, cam_offset)
 
-        waves.auto_wave()
+        #waves.auto_wave()
+        if a:
+            enemies.spawn("CACADOR")
+            a = False
+        
         collision_detection()
         update_scenario()
         draw_scenario()

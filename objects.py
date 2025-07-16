@@ -22,6 +22,56 @@ def spawn(type):
 
     objects_list.append(new_object)
 
+def bullet_spawn(enemy, target_x, target_y):
+    sprite_w = enemy["SPRITE"].width
+    sprite_h = enemy["SPRITE"].height
+
+    # Corrige o x e o y para ficar no meio:
+    sprite_x = enemy["SPRITE"].x + sprite_w//2
+    sprite_y = enemy["SPRITE"].y + sprite_h//2
+
+    dx = target_x - sprite_x
+    dy = target_y - sprite_y
+    distancia = (dx**2 + dy**2)**0.5
+
+    #angle = math.degrees(math.atan2(-dy,dx))
+    spawn_pos_x = sprite_x
+    spawn_pos_y = sprite_y
+    """
+    print(int(angle))
+
+    if -45 < int(angle) < 45: # Spawna na direita do player
+       spawn_pos_x += player_width//2 + 20
+       print("DIREITA")  
+    elif 45 < int(angle) < 135: # Spawna em cima do player=
+       spawn_pos_y -= player_height//2 + 20
+       print("CIMA")
+    elif 135 < int(angle) < -135: # Spawna na esquerda do player
+       print("ESQUERDA")
+       spawn_pos_x -= player_width//2 + 20
+    elif -135 < int(angle) < -45: # Spawna embaixo do player
+       print("EMBAIXO")
+       spawn_pos_y += player_height//2 + 20
+    """
+
+    if distancia == 0: # Evita divisão por 0
+        dir_x, dir_y = 0,0
+    else:
+        dir_x = dx / distancia
+        dir_y = dy / distancia
+
+    bullet = {
+        "TYPE": "BULLET",
+        "SPEED": 300,
+        "X": spawn_pos_x,
+        "Y": spawn_pos_y,
+        "DIR_X": dir_x,
+        "DIR_Y": dir_y,
+        "SPRITE": Sprite("assets/bullet.png"),
+    }
+
+    objects_list.append(bullet)
+
 def fireball_spawn(player_x, player_y, target_x, target_y):
     player_width = player.player["SPRITE"].width
     player_height = player.player["SPRITE"].height

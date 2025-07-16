@@ -1,6 +1,7 @@
 import random
-
+import globals
 from player import player
+from objects import bullet_spawn
 from PPlay.sprite import *
 
 enemies_list = []
@@ -46,6 +47,8 @@ def spawn(type):
         new_enemy["ATK"] = 15
         new_enemy["SPEED"] = 50
 
+        new_enemy["AIMING_TIME"] = 250
+
         new_enemy["SPRITE"] = Sprite("assets/cacador.png", frames = 3)
         new_enemy["SPRITE"].set_total_duration(1000)
     
@@ -54,18 +57,33 @@ def spawn(type):
 def reset():
     enemies_list.clear()
 
-def cacador_ai(enemy, player_x, player_y, delta_t):
-    dir_x = player_x - enemy["X"]
-    dir_y = player_y - enemy["Y"]
-
+def cacador_ai(cacador, player_x, player_y, delta_t):
+    dir_x = player_x - cacador["X"]
+    dir_y = player_y - cacador["Y"]
     distancia = (dir_x**2 + dir_y**2)**0.5 # Teorema de Pitágoras
 
     if distancia > 0: # Evita divisão por 0
         dir_x /= distancia
         dir_y /= distancia
 
-    enemy["X"] += dir_x * enemy["SPEED"] * delta_t
-    enemy["Y"] += dir_y * enemy["SPEED"] * delta_t
+    if distancia <= 250:
+        globals.WINDOW.draw_text(str(cacador["AIMING_TIME"]), 
+                                 cacador["SPRITE"].x, 
+                                 cacador["SPRITE"].y - 50,
+                                 size = 35,
+                                 color=(255,255,255),
+                                 font_name="Arial",
+                                 bold = True,
+                                 italic = False)
+        
+        if cacador["AIMING_TIME"] == 0:
+            bullet_spawn(cacador, player_x, player_y)
+            cacador["AIMING_TIME"] = 250
+        else:
+            cacador["AIMING_TIME"] -= 1
+    else:
+        cacador["X"] += dir_x * cacador["SPEED"] * delta_t
+        cacador["Y"] += dir_y * cacador["SPEED"] * delta_t
 
 def lenhador_ai(enemy, player_x, player_y, delta_t):
     dir_x = player_x - enemy["X"]
