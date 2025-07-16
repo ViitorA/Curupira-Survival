@@ -12,8 +12,6 @@ def game_over():
     text_rect.centerx = WINDOW.width // 2
     text_rect.centery = WINDOW.height // 2
     WINDOW.draw_text("GAME OVER", text_rect.x, text_rect.y, size = 50, color = (255,255,255), font_name = 'Tahoma', bold = True, italic = False) 
-    
-    WINDOW.update()
 
     if KEYBOARD.key_pressed("ESC"):
-        globals.current_state = "MENU"
+        globals.current_state = "MAIN_MENU"

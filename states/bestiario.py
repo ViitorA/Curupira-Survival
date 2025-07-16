@@ -81,7 +81,7 @@ def mostrar_bestiario():
                 WINDOW.draw_text(f"Javalis abatidos: {abates}", javali.x, javali.y + javali.height, size=25, color=(0,0,0))
 
             elif nome == "LENHADOR":
-                WINDOW.draw_text(f"Lenhados abatidos: {abates}", lenhador.x - lenhador.width, lenhador.y + lenhador.height , size=25, color=(0,0,0))
+                WINDOW.draw_text(f"Lenhadores abatidos: {abates}", lenhador.x - lenhador.width, lenhador.y + lenhador.height , size=25, color=(0,0,0))
                 
 
             elif nome == "CACADOR":
@@ -89,6 +89,6 @@ def mostrar_bestiario():
 
 
     if KEYBOARD.key_pressed("ESC"):
-        globals.current_state = "MENU"
+        globals.current_state = "MAIN_MENU"
     
     WINDOW.update()

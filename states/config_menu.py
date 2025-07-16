@@ -3,6 +3,7 @@ from PPlay.sprite import *
 
 import globals
 import states.menu as menu
+import states.game as game
 from utils import clicked
 
 def mostrar_configs():
@@ -26,8 +27,10 @@ def mostrar_configs():
     returnButton.set_position((WINDOW.width - returnButton.width)/2, WINDOW.height - 150)
     returnButton.draw()
     
+    # TODO: ALTERAR
     if KEYBOARD.key_pressed("ESC") or clicked(MOUSE, returnButton): 
-        globals.current_state = "MENU"
+        # Ele precisa ver se vai retornar pro main menu ou pro game menu
+        globals.current_state = "GAME_MENU" if game.is_running else "MAIN_MENU"
 
     if clicked(MOUSE, manualButtonPress): 
         globals.manual_mode = 1 - globals.manual_mode # inverte

@@ -24,8 +24,8 @@ def auto_wave():
         for _ in range(n):
             # Depois fazer O Javali só spawnar a partir de x minutos, o mesmo para o caçador, para a dificuldade
             # ir aumentando conforme o tempo
-            #enemies.spawn(random.choice(["JAVALI", "LENHADOR"]))
-            enemies.spawn("CACADOR")
+            #enemies.spawn(random.choice(["JAVALI", "LENHADOR", "CACADOR"]))
+            enemies.spawn("LENHADOR")
 
         last_wave = pygame.time.get_ticks()
 

@@ -2,7 +2,6 @@ WINDOW = None
 KEYBOARD = None
 MOUSE = None
 
-BG1 = None
 HIT_SOUND = None
 XP_SOUND = None
 

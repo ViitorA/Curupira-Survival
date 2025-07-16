@@ -13,8 +13,13 @@ from states.bestiario import atualizar_abates
 
 cam_offset = [0,0]
 
+is_running = False
 start_time = None  
 delta_t = None
+
+
+BG_MUSIC = Sound("assets/audio/bg1_the-gensokyo-the-gods-loved.mp3")
+music_playing = False
 
 death_count = {
     "JAVALI" : 0,
@@ -171,65 +176,75 @@ def separar_inimigos():
                 enemy_a["X"] += (dx/dist) * force
                 enemy_a["Y"] += (dy/dist) * force
 
-def run():
-    global start_time, delta_t
+def game_init():
+    global is_running, start_time, BG_MUSIC, music_playing
+    is_running = True
     start_time = pygame.time.get_ticks()
     
-    # P/a o código ficar menos verboso e evitar erros de digitação
+    player.spawn()
+    cam_offset[0] = player.player["SPRITE"].x - globals.WINDOW.width // 2
+    cam_offset[1] = player.player["SPRITE"].y - globals.WINDOW.height // 2
+
+    BG_MUSIC.loop = True
+    BG_MUSIC.play()
+    BG_MUSIC.set_volume(50)
+    music_playing = True
+    globals.HIT_SOUND = Sound("assets/audio/hit.wav")
+    globals.XP_SOUND = Sound("assets/audio/xp.wav")
+
+def run():
+    # P/a o código ficar menos verboso
     WINDOW = globals.WINDOW
     KEYBOARD = globals.KEYBOARD
     MOUSE = globals.MOUSE
 
-    player.spawn()
+    global is_running, start_time, delta_t, music_playing
+    delta_t = WINDOW.delta_time()
+
+    if not is_running:
+        game_init()
     
-    cam_offset[0] = player.player["SPRITE"].x - WINDOW.width // 2
-    cam_offset[1] = player.player["SPRITE"].y - WINDOW.height // 2
-    
-    globals.BG1 = Sound("assets/audio/bg1_the-gensokyo-the-gods-loved.mp3")
-    globals.BG1.loop = True
-    globals.BG1.play()
-    globals.HIT_SOUND = Sound("assets/audio/hit.wav")
-    globals.XP_SOUND = Sound("assets/audio/xp.wav")
-
-    #a = True
-    while True:
-        delta_t = WINDOW.delta_time()
-
-        # TODO: FAZER A MÚSICA DE FUNDO PAUSAR QUANDO APERTAR O BOTÃO DO MENU
-        if KEYBOARD.key_pressed("ESC"):
-            globals.current_state = "MENU"
-            atualizar_abates(death_count.copy())
-            return 0
-
-        player.input(KEYBOARD, MOUSE)
-        utils.draw_background(WINDOW, cam_offset)
-
-        waves.auto_wave()
-        #if a:
-        #    enemies.spawn("CACADOR")
-        #    a = False
+    if not music_playing:
+        BG_MUSIC.unpause()
+        music_playing = True
         
-        collision_detection()
-        update_scenario()
-        separar_inimigos()
-        draw_scenario()
+    if KEYBOARD.key_pressed("ESC"):
+        BG_MUSIC.pause()
+        music_playing = False
+        globals.current_state = "GAME_MENU"
+        atualizar_abates(death_count.copy())
 
-        if player.player["HP"] <= 0:
-            globals.BG1.stop()
-            Sound("assets/audio/game-over.wav").play()
-            atualizar_abates(death_count.copy())  # Salva os abates
-            utils.reset_game()
-            globals.current_state = "GAME_OVER"
-            return 0
+    player.input(KEYBOARD, MOUSE)
+    utils.draw_background(WINDOW, cam_offset)
 
-        player.update_info()
-        utils.draw_sprite(player.player) 
-
-        if enemies.enemies_list != []:
-            if not globals.manual_mode: player.auto_attack(enemies.enemies_list)
-            enemies.think(cam_offset, delta_t)
-
-        desenhar_ui(player.player)
-
-        WINDOW.update()
+    waves.auto_wave()
         
+    collision_detection()
+    update_scenario()
+    separar_inimigos()
+    draw_scenario()
+
+    player.update_info()
+    utils.draw_sprite(player.player) 
+
+    if enemies.enemies_list != []:
+        if not globals.manual_mode: player.auto_attack(enemies.enemies_list)
+        enemies.think(cam_offset, delta_t)
+
+    desenhar_ui(player.player)
+
+    if player.player["HP"] <= 0:
+        BG_MUSIC.stop()
+        Sound("assets/audio/game-over.wav").play()
+        atualizar_abates(death_count.copy())  # Salva os abates
+        utils.reset_modules_vars()
+        reset_game_vars()
+        globals.current_state = "GAME_OVER"
+
+def reset_game_vars():
+    global is_running, start_time, delta_t, cam_offset
+    is_running = False
+    start_time = None
+    delta_t = None
+
+    cam_offset = [0,0]

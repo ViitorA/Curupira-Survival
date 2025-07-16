@@ -78,11 +78,7 @@ def draw_background(window, cam_offset):
             tile.set_position(x, y)
             tile.draw()
 
-def reset_game():
-    global start_time, delta_t
-    start_time = None
-    delta_t = None
-
+def reset_modules_vars():
     # Volta os dados do jogo p/a o estado inicial  
     player.reset()
     objects.reset()
