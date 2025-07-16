@@ -61,11 +61,10 @@ def draw_scenario():
         else:
             object["SPRITE"].draw()
 
-    for enemy in enemies.enemies_list: # TODO: Ajeitar inversão do sprite
+    for enemy in enemies.enemies_list:
         enemy["SPRITE"].set_position(enemy["X"] - cam_offset[0], enemy["Y"] - cam_offset[1])
         enemy["SPRITE"].update()
 
-        # Depois ajeitar esse cálculo aqui
         if enemy["SPRITE"].x > player.player["SPRITE"].x:
             enemy["FACING_RIGHT"] = 0
         else:
@@ -90,7 +89,6 @@ def collision_detection():
                 enemy_sprite = enemy["SPRITE"]
                 fireball_sprite = object["SPRITE"]
 
-                # BUGADO
                 verificavel = not(enemy_sprite.x > fireball_sprite.x + fireball_sprite.width or
                                   enemy_sprite.x + enemy_sprite.width < fireball_sprite.x or
                                   enemy_sprite.y > fireball_sprite.y + fireball_sprite.height or
@@ -108,6 +106,19 @@ def collision_detection():
             # Verifica se saiu dos limites da "tela". Não preciso me preocupar com o tamanho exato do sprite, já que essa remoção não será vista pelo jogador
             if not(X_MIN <= object["SPRITE"].x <= X_MAX and Y_MIN <= object["SPRITE"].y <= Y_MAX): 
                 objects.objects_list.remove(object)
+        elif object["TYPE"] == "BULLET":
+            verificavel = not(player_sprite.x > object["SPRITE"].x + object["SPRITE"].width or
+                              player_sprite.x + player_sprite.width < object["SPRITE"].x or
+                              player_sprite.y > object["SPRITE"].y + object["SPRITE"].height or
+                              player_sprite.y + player_sprite.height < object["SPRITE"].y
+                              )
+            
+            if verificavel and object["SPRITE"].collided_perfect(player_sprite):
+                print("HIT")
+                player.player["HP"] -= object["DAMAGE"]
+                globals.HIT_SOUND.play()
+                objects.objects_list.remove(object)
+
         elif object["TYPE"] == "XP" and object["SPRITE"].collided(player_sprite):
                 player.player["XP"] += object["VALUE"]
                 globals.XP_SOUND.play()

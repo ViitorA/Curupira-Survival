@@ -1,7 +1,7 @@
 import random
-import globals
 from player import player
 from objects import bullet_spawn
+from ui import mostrar_tempo_mira
 from PPlay.sprite import *
 
 enemies_list = []
@@ -44,7 +44,7 @@ def spawn(type):
         new_enemy["SPRITE"].set_total_duration(1000)
     elif new_enemy["TYPE"] == "CACADOR":
         new_enemy["HP"] = 100
-        new_enemy["ATK"] = 15
+        new_enemy["ATK"] = 0 # Não dá dano meelee
         new_enemy["SPEED"] = 50
 
         new_enemy["AIMING_TIME"] = 250
@@ -67,21 +67,18 @@ def cacador_ai(cacador, player_x, player_y, delta_t):
         dir_y /= distancia
 
     if distancia <= 250:
-        globals.WINDOW.draw_text(str(cacador["AIMING_TIME"]), 
-                                 cacador["SPRITE"].x, 
-                                 cacador["SPRITE"].y - 50,
-                                 size = 35,
-                                 color=(255,255,255),
-                                 font_name="Arial",
-                                 bold = True,
-                                 italic = False)
-        
+        mostrar_tempo_mira(cacador)
+
         if cacador["AIMING_TIME"] == 0:
             bullet_spawn(cacador, player_x, player_y)
             cacador["AIMING_TIME"] = 250
         else:
             cacador["AIMING_TIME"] -= 1
+            cacador["SPRITE"].set_curr_frame(0)
+            cacador["SPRITE"].pause()
     else:
+        cacador["AIMING_TIME"] = 250
+        cacador["SPRITE"].play()
         cacador["X"] += dir_x * cacador["SPEED"] * delta_t
         cacador["Y"] += dir_y * cacador["SPEED"] * delta_t
 

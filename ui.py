@@ -107,6 +107,16 @@ def mostrar_inimigos_mortos(window):
                      bold = False, 
                      italic = False)
 
+def mostrar_tempo_mira(enemy):
+    x = (enemy["SPRITE"].x + enemy["SPRITE"].width/2) - 40 if enemy["FACING_RIGHT"] else (enemy["SPRITE"].x + enemy["SPRITE"].width/2)    
+    y = enemy["SPRITE"].y - 35
+    globals.WINDOW.draw_text(str(enemy["AIMING_TIME"]), x, y,
+                             size = 25,
+                             color=WHITE,
+                             font_name=FONTE,
+                             bold = False,
+                             )
+
 def desenhar_ui(player):
     WINDOW = globals.WINDOW
 

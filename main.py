@@ -9,8 +9,6 @@
 # player
 # TODO: ADICIONAR EFEITO SONORO DE QUANDO JOGADOR COLETA ITEM AUXILIAR
 # TODO: FAZER A MÚSICA DE FUNDO PAUSAR QUANDO APERTAR O BOTÃO DO MENU
-# TODO: Colisão entre sprites tá muito bugada, parece até que o collided perfect não tá funcionando
-# TODO: FAZER ANIMAÇÃO DO CAÇADOR AJOELHANDO E MIRANDO PARA ATIRAR
 # TODO: FAZER ANIMAÇÃO DE CHARGE DO JAVALI
 # TODO: Ajustar a posição dos botões no menu de configurações
 # TODO: Fazer animação idle do curupira
