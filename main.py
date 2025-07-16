@@ -1,8 +1,9 @@
 # TODO LIST:
 # IMPLEMENTAR ITENS
 # 1 - PLAYER STATS
+# TODO: Colisão com os sprites inimigos quando estão virados p/a esquerda bugado
 # TODO: otimizar a detecção de colisão de projéteis igual o do space invaders
-# TODO: Implementar colisão para inimigos não ficar o sprite um em cima do outro
+# TODO: Ajustar o texto do bestiário
 # BUGS CONHECIDOS:
 # - inimigos spawnando na tua frente, eles spawnam em coordenadas fixas, ajuste para coordenadas a partir do 
 # player

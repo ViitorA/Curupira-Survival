@@ -77,11 +77,10 @@ def collision_detection():
 
     # P/a ficar menos verboso
     player_sprite = player.player["SPRITE"]
+
     X_MIN, X_MAX = player_sprite.x - WINDOW.width, player_sprite.x + WINDOW.width
     Y_MIN, Y_MAX = player_sprite.y - WINDOW.height, player_sprite.y + WINDOW.height
 
-    # TODO: otimizar a detecção de colisão igual o do space invaders
-    # TODO: Colisão entre sprites tá muito bugada, parece até que o collided perfect não tá funcionando
     for object in objects.objects_list:
         if object["TYPE"] == "FIREBALL":
             # VERIFICAÇÃO DE COLISÃO COM INIMIGO
@@ -95,7 +94,8 @@ def collision_detection():
                                   enemy_sprite.y + enemy_sprite.height < fireball_sprite.y
                                   )
 
-                if verificavel and object["SPRITE"].collided_perfect(enemy["SPRITE"]):
+                if verificavel:
+                    # TODO: FAZER DETECTAR COLISÃO COM OS SPRITES VIRADOS P/A ESQUERDA
                     print("VERIFICAVEL")
                     objects.drop_xp(enemy)
                     objects.objects_list.remove(object)
@@ -107,6 +107,7 @@ def collision_detection():
             # Verifica se saiu dos limites da "tela". Não preciso me preocupar com o tamanho exato do sprite, já que essa remoção não será vista pelo jogador
             if not(X_MIN <= object["SPRITE"].x <= X_MAX and Y_MIN <= object["SPRITE"].y <= Y_MAX): 
                 objects.objects_list.remove(object)
+                
         elif object["TYPE"] == "BULLET":
             verificavel = not(player_sprite.x > object["SPRITE"].x + object["SPRITE"].width or
                               player_sprite.x + player_sprite.width < object["SPRITE"].x or
@@ -144,6 +145,32 @@ def collision_detection():
                 globals.HIT_SOUND.play()
                 enemy["LAST-ATK"] = pygame.time.get_ticks()
 
+def separar_inimigos():
+    for i, enemy_a in enumerate(enemies.enemies_list):
+        rect_a = pygame.Rect(enemy_a["X"], 
+                             enemy_a["Y"], 
+                             enemy_a["SPRITE"].width, 
+                             enemy_a["SPRITE"].height)
+        for j, enemy_b in enumerate(enemies.enemies_list):
+            # Verifica se é o mesmo inimigo
+            if i == j:
+                continue
+            rect_b = pygame.Rect(enemy_b["X"], 
+                                 enemy_b["Y"], 
+                                 enemy_b["SPRITE"].width, 
+                                 enemy_b["SPRITE"].height)
+            
+            if rect_a.colliderect(rect_b):
+                # Calcula direção de separação
+                dx = rect_a.centerx - rect_b.centerx
+                dy = rect_a.centery - rect_b.centery
+                dist = max((dx**2 + dy**2)**0.5, 1)
+
+                # Aplica uma pequena força para separar
+                force = 2  # ajuste conforme necessário
+                enemy_a["X"] += (dx/dist) * force
+                enemy_a["Y"] += (dy/dist) * force
+
 def run():
     global start_time, delta_t
     start_time = pygame.time.get_ticks()
@@ -164,7 +191,7 @@ def run():
     globals.HIT_SOUND = Sound("assets/audio/hit.wav")
     globals.XP_SOUND = Sound("assets/audio/xp.wav")
 
-    a = True
+    #a = True
     while True:
         delta_t = WINDOW.delta_time()
 
@@ -177,13 +204,14 @@ def run():
         player.input(KEYBOARD, MOUSE)
         utils.draw_background(WINDOW, cam_offset)
 
-        #waves.auto_wave()
-        if a:
-            enemies.spawn("CACADOR")
-            a = False
+        waves.auto_wave()
+        #if a:
+        #    enemies.spawn("CACADOR")
+        #    a = False
         
         collision_detection()
         update_scenario()
+        separar_inimigos()
         draw_scenario()
 
         if player.player["HP"] <= 0:
