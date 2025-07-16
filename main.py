@@ -1,7 +1,6 @@
 # TODO LIST:
 # IMPLEMENTAR ITENS
 # 1 - PLAYER STATS
-# 3 - Uma opção nas configurações para alterar entre mira/ataque automático ou manual=
 # TODO: otimizar a detecção de colisão de projéteis igual o do space invaders
 # TODO: Implementar colisão para inimigos não ficar o sprite um em cima do outro
 # BUGS CONHECIDOS:
@@ -10,7 +9,6 @@
 # TODO: ADICIONAR EFEITO SONORO DE QUANDO JOGADOR COLETA ITEM AUXILIAR
 # TODO: FAZER A MÚSICA DE FUNDO PAUSAR QUANDO APERTAR O BOTÃO DO MENU
 # TODO: FAZER ANIMAÇÃO DE CHARGE DO JAVALI
-# TODO: Ajustar a posição dos botões no menu de configurações
 # TODO: Fazer animação idle do curupira
 
 from PPlay.window import *

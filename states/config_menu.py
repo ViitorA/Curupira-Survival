@@ -3,7 +3,6 @@ from PPlay.sprite import *
 
 import globals
 import states.menu as menu
-import states.game as game
 from utils import clicked
 
 def mostrar_configs():
@@ -17,10 +16,10 @@ def mostrar_configs():
     manualButton.set_position( 100, 100)
     manualButton.draw()
 
-    # TODO: Ajustar a posição disso aq
     manualButtonPress = Sprite("assets/press-button.png", frames=2)
     manualButtonPress.set_curr_frame(globals.manual_mode)
-    manualButtonPress.set_position(100 + manualButton.width + 40, 100)
+    manualButtonPress.set_position(100 + manualButton.width + 40, 
+                                   manualButton.y + (manualButton.height - manualButtonPress.height)/2)
     manualButtonPress.draw()
 
     returnButton = GameImage("assets/botao-voltar.png")
