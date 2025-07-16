@@ -77,13 +77,13 @@ def collision_detection():
 
     # P/a ficar menos verboso
     player_sprite = player.player["SPRITE"]
+    X_MIN, X_MAX = player_sprite.x - WINDOW.width, player_sprite.x + WINDOW.width
+    Y_MIN, Y_MAX = player_sprite.y - WINDOW.height, player_sprite.y + WINDOW.height
+
     # TODO: otimizar a detecção de colisão igual o do space invaders
     # TODO: Colisão entre sprites tá muito bugada, parece até que o collided perfect não tá funcionando
     for object in objects.objects_list:
         if object["TYPE"] == "FIREBALL":
-            X_MIN, X_MAX = player_sprite.x - WINDOW.width, player_sprite.x + WINDOW.width
-            Y_MIN, Y_MAX = player_sprite.y - WINDOW.height, player_sprite.y + WINDOW.height
-            
             # VERIFICAÇÃO DE COLISÃO COM INIMIGO
             for enemy in enemies.enemies_list:
                 enemy_sprite = enemy["SPRITE"]
@@ -103,6 +103,7 @@ def collision_detection():
                     player.player["ENEMIES_KILLED"] += 1
                     death_count[enemy["TYPE"]] += 1
                     break
+
             # Verifica se saiu dos limites da "tela". Não preciso me preocupar com o tamanho exato do sprite, já que essa remoção não será vista pelo jogador
             if not(X_MIN <= object["SPRITE"].x <= X_MAX and Y_MIN <= object["SPRITE"].y <= Y_MAX): 
                 objects.objects_list.remove(object)
@@ -118,7 +119,9 @@ def collision_detection():
                 player.player["HP"] -= object["DAMAGE"]
                 globals.HIT_SOUND.play()
                 objects.objects_list.remove(object)
-
+            
+            if not(X_MIN <= object["SPRITE"].x <= X_MAX and Y_MIN <= object["SPRITE"].y <= Y_MAX): 
+                objects.objects_list.remove(object)
         elif object["TYPE"] == "XP" and object["SPRITE"].collided(player_sprite):
                 player.player["XP"] += object["VALUE"]
                 globals.XP_SOUND.play()
