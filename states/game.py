@@ -9,11 +9,18 @@ import player
 import enemies
 import objects
 import waves
+from states.bestiario import atualizar_abates
 
 cam_offset = [0,0]
 
 start_time = None  
 delta_t = None
+
+death_count = {
+    "JAVALI" : 0,
+    "LENHADOR" : 0,
+    "CACADOR" :0
+} 
 
 def update_scenario(): 
     """
@@ -94,6 +101,7 @@ def collision_detection():
                     objects.objects_list.remove(object)
                     enemies.enemies_list.remove(enemy)
                     player.player["ENEMIES_KILLED"] += 1
+                    death_count[enemy["TYPE"]] += 1
                     break
             # Verifica se saiu dos limites da "tela". Não preciso me preocupar com o tamanho exato do sprite, já que essa remoção não será vista pelo jogador
             if not(X_MIN <= object["SPRITE"].x <= X_MAX and Y_MIN <= object["SPRITE"].y <= Y_MAX): 
@@ -146,6 +154,7 @@ def run():
         # TODO: FAZER A MÚSICA DE FUNDO PAUSAR QUANDO APERTAR O BOTÃO DO MENU
         if KEYBOARD.key_pressed("ESC"):
             globals.current_state = "MENU"
+            atualizar_abates(death_count.copy())
             return 0
 
         player.input(KEYBOARD, MOUSE)
@@ -159,6 +168,7 @@ def run():
         if player.player["HP"] <= 0:
             globals.BG1.stop()
             Sound("assets/audio/game-over.wav").play()
+            atualizar_abates(death_count.copy())  # Salva os abates
             utils.reset_game()
             globals.current_state = "GAME_OVER"
             return 0
