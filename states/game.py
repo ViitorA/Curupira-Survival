@@ -192,6 +192,7 @@ def game_init():
     globals.HIT_SOUND = Sound("assets/audio/hit.wav")
     globals.XP_SOUND = Sound("assets/audio/xp.wav")
 
+a = True
 def run():
     # P/a o código ficar menos verboso
     WINDOW = globals.WINDOW
@@ -217,8 +218,12 @@ def run():
     player.input(KEYBOARD, MOUSE)
     utils.draw_background(WINDOW, cam_offset)
 
-    waves.auto_wave()
-        
+    #waves.auto_wave()
+    global a
+    if a:
+        enemies.spawn("JAVALI")
+        a = False
+
     collision_detection()
     update_scenario()
     separar_inimigos()

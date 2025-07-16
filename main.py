@@ -3,14 +3,12 @@
 # 1 - PLAYER STATS
 # TODO: Colisão com os sprites inimigos quando estão virados p/a esquerda bugado
 # TODO: otimizar a detecção de colisão de projéteis igual o do space invaders
-# TODO: Ajustar o texto do bestiário
 # TODO: Depois adicionar opção de ajustar volume do jogo
 # BUGS CONHECIDOS:
 # - inimigos spawnando na tua frente, eles spawnam em coordenadas fixas, ajuste para coordenadas a partir do 
 # player
 # TODO: ADICIONAR EFEITO SONORO DE QUANDO JOGADOR COLETA ITEM AUXILIAR
 # TODO: FAZER A MÚSICA DE FUNDO PAUSAR QUANDO APERTAR O BOTÃO DO MENU
-# TODO: FAZER ANIMAÇÃO DE CHARGE DO JAVALI
 # TODO: Fazer animação idle do curupira
 # TODO: OTIMIZAR SEPARAR INIMIGOS
     # Spatial partitioning (dividir o mapa em células e só comparar inimigos próximos)
