@@ -23,6 +23,8 @@ import states.game as game
 from states.menu import mostrar_menu
 from states.game_over import game_over
 from states.config_menu import mostrar_configs
+from states.bestiario import mostrar_bestiario
+
 
 def init():
     """
@@ -51,4 +53,6 @@ while True:
     elif current_state == "CONFIG":
         mostrar_configs()
         globals.WINDOW.update()
-    
+    elif current_state == "BESTIARIO":
+        mostrar_bestiario()
+        globals.WINDOW.update()
