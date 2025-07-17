@@ -42,32 +42,19 @@ def draw_sprite(object):
         globals.WINDOW.get_screen().blit(flipped_surface, (sprite.x, sprite.y))
 
 def draw_background(window, cam_offset):
-    """
-    window_width = window.width
-    window_height = window.height
-    
-    bac = GameImage("assets/grass.png")
-    x = 0
-    y = 0
-
-    while(y < window_height):
-        while(x < window_width):
-            bac.set_position(x - cam_offset[0],y - cam_offset[1])
-            bac.draw()
-
-            x += bac.width
-        y += bac.height
-        x = 0
-    """
-    # TODO: ENTENDER PQ ISSO AQ FUNCIONA
     tile = GameImage("assets/grass.png")
-    tile_w, tile_h = tile.width, tile.height
+    tile_w, tile_h = tile.width, tile.height # Tamanho dos tiles
 
     # Calcula o início do grid para cobrir toda a tela
+    # Calcula as coordenadas x e y p/a começar a desenhar os tiles
+    # Obs.: o % serve p/a alinhar os tiles com a posição da câmera
+    # Exemplo: se a câmera se move para a direita, o cam_offset[0] aumenta. O % tile_w pega apenas 
+    # quanto a câmera avançou além do tamanho de um tile.
+    # Obs.: o - inverte o valor, fazendo com que o tile seja deslocado p/a trás
     start_x = -((cam_offset[0]) % tile_w)
     start_y = -((cam_offset[1]) % tile_h)
 
-    # Quantos tiles cabem na tela (+2 para garantir cobertura)
+    # Calcula quantos tiles cabem na tela (+2 para garantir cobertura)
     tiles_x = window.width // tile_w + 2
     tiles_y = window.height // tile_h + 2
 
