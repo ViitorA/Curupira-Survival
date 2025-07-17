@@ -58,13 +58,10 @@ def mostrar_drops(i1, i2, i3):
     WINDOW.draw_text(str(i3["EFFECT"]) + ' ' + i3["TYPE"], BOX3_X, BOXES_Y + SIZE + PADDING, size = 15, color=WHITE, font_name=FONTE, bold=True, italic=False)
 
     if globals.MOUSE.is_button_pressed(1) and globals.MOUSE.is_over_object(i1["BIG_ICON"]):
-        print("CLICOU 1")
         return 1
     elif globals.MOUSE.is_button_pressed(1) and globals.MOUSE.is_over_object(i2["BIG_ICON"]):
-        print("CLICOU 2")
         return 2
     elif globals.MOUSE.is_button_pressed(1) and globals.MOUSE.is_over_object(i3["BIG_ICON"]):
-        print("CLICOU 3")
         return 3
 
     WINDOW.update()
@@ -137,14 +134,13 @@ def desenhar_barra_xp(janela):
 
 def desenhar_barra_vida(window):
     largura_barra_hp = 100
-    hp_max = 100
     
     # DESENHA A BARRA DE HP VAZIA
     pygame.draw.rect(window.get_screen(), BLACK, (player["SPRITE"].x - 100/4, 
                                                   player["SPRITE"].y + player["SPRITE"].height + 5, 
                                                   largura_barra_hp, 20))
     
-    barra_preenchida = (player["HP"] / hp_max) * largura_barra_hp
+    barra_preenchida = (player["HP"] / player["HP_MAX"]) * largura_barra_hp
 
     # DESENHA A BARRA COM A VIDA ATUAL DO JOGADOR
     pygame.draw.rect(window.get_screen(), RED, (player["SPRITE"].x - 100/4, 

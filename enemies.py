@@ -10,10 +10,10 @@ def spawn(type, cam_offset):
     player_x = int(cam_offset[0])
     player_y = int(cam_offset[1])
 
-    x_left = random.randint(player_x - 1200, player_x - 1000)
-    x_right = random.randint(player_x + 1000, player_x + 1200)
-    y_up = random.randint(player_y - 1200, player_y - 1000)
-    y_down = random.randint(player_y + 1000, player_y + 1200)
+    x_left = random.randint(player_x - 1000, player_x - 850)
+    x_right = random.randint(player_x + 850, player_x + 1000)
+    y_up = random.randint(player_y - 1000, player_y - 850)
+    y_down = random.randint(player_y + 850, player_y + 1000)
 
     new_enemy = {
         "TYPE": type.upper(),

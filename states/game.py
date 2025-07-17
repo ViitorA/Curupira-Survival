@@ -106,7 +106,7 @@ def collision_detection():
 
                     # Chance de 10% de dropar comida
                     if random.random() < 0.1:
-                        objects.spawn("Comida", enemy["SPRITE"].x + 10, enemy["SPRITE"].y + 10)
+                        objects.spawn("Comida", enemy["X"] + 10, enemy["Y"] + 10)
 
                     objects.objects_list.remove(object)
                     enemies.enemies_list.remove(enemy)
@@ -138,7 +138,7 @@ def collision_detection():
                 globals.XP_SOUND.play()
                 objects.objects_list.remove(object)
         elif object["TYPE"] == "Comida" and object["SPRITE"].collided(player_sprite):
-            player.player["HP"] = min(player.player["HP"] + 20, 100)
+            player.player["HP"] = min(player.player["HP"] + 20, player.player["HP_MAX"])
             objects.objects_list.remove(object)
     
     for enemy in enemies.enemies_list:
@@ -194,7 +194,7 @@ def game_init():
          "ICON": GameImage("assets/botas-magicas_icon.png"), 
          "BIG_ICON": GameImage("assets/botas-magicas_icon2.png")}, 
 
-        {"NAME": "Armadura De Couro", "EFFECT": 50, "TYPE": "HP", 
+        {"NAME": "Armadura De Couro", "EFFECT": 20, "TYPE": "HP_MAX", 
          "ICON": GameImage("assets/armadura-couro_icon.png"), 
          "BIG_ICON": GameImage("assets/armadura-couro_bicon.png")},
 

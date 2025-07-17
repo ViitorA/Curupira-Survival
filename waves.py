@@ -19,7 +19,13 @@ def auto_wave(cam_offset):
     global WAVE_COOLDOWN, last_wave
 
     if pygame.time.get_ticks() - last_wave > WAVE_COOLDOWN:
-        n = random.randint(1*player["LEVEL"] + 1,2*player["LEVEL"] + 1)
+        n = None
+        if player["LEVEL"] == 0:
+            n = random.randint(1, 2)
+        elif player["LEVEL"] == 1:
+            n = random.randint(2,3)
+        else:
+            n = random.randint(2,4)
 
         for _ in range(n):
             enemies.spawn(random.choice(["JAVALI", "LENHADOR", "CACADOR"]), cam_offset)

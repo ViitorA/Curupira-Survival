@@ -17,15 +17,9 @@ VELOCIDADE = 250
 last_player_attack = 0
 
 def add_item(item):
-    print("OLD")
-    print("HP: " + str(player["HP"]))
-    print("ATK-COOLDOWN: " + str(player["ATK-COOLDOWN"]))
-    print("SPD: " + str(player["SPD"]))
-    print("RES: " + str(player["RES"]))
-
     # Itens de comida não são equipáveis nem upgradáveis
     if item["NAME"] == "Comida":
-        player["HP"] = min(player["HP"] + item["EFFECT"], 100)
+        player["HP"] = min(player["HP"] + item["EFFECT"], player["HP_MAX"])
         return
 
     # Verifica se o item já está no inventário
@@ -34,6 +28,8 @@ def add_item(item):
             # Se já está, só faz o upgrade e não adiciona novamente no inventário
             if item["NAME"] == "Bola De Fogo":
                 player[item["TYPE"]] = max(player[item["TYPE"]] + item["EFFECT"], 0)
+            elif item["NAME"] == "Armadura De Couro":
+                player[item["TYPE"]] = min(player[item["TYPE"]] + item["EFFECT"] , 200)
             else:
                 player[item["TYPE"]] = min(player[item["TYPE"]] + item["EFFECT"], 100)
             return
@@ -42,22 +38,18 @@ def add_item(item):
     player_items.append(item)
     if item["NAME"] == "Bola De Fogo":
         player[item["TYPE"]] = max(player[item["TYPE"]] + item["EFFECT"], 0)
+    elif item["NAME"] == "Armadura De Couro":
+        player[item["TYPE"]] = min(player[item["TYPE"]] + item["EFFECT"] , 200)
     else:
         player[item["TYPE"]] = min(player[item["TYPE"]] + item["EFFECT"], 100)
-
-    print("NEW")
-    print("HP: " + str(player["HP"]))
-    print("ATK-COOLDOWN: " + str(player["ATK-COOLDOWN"]))
-    print("SPD: " + str(player["SPD"]))
-    print("RES: " + str(player["RES"]))
 
 def spawn():
     WINDOW = globals.WINDOW
 
     player["HP"] = 100
+    player["HP_MAX"] = 100
     player["ATK"] = 1
     player["ATK-COOLDOWN"] = 1500
-    player["RES"] = 1 # Resistance
     player["SPD"] = 1
 
     player["LEVEL"] = 0
@@ -144,9 +136,9 @@ def update_info():
     # Checa se já pode subir de level
     if player["XP"] >= player["XP_MAX"]:
         player["LEVEL"] += 1
-        player["ATK-COOLDOWN"] -= 5
+        player["ATK-COOLDOWN"] -= 10
         player["XP"] = player["XP_MAX"] - player["XP"]
-        player["XP_MAX"] *= 2 # Dobra a qtd necessária de xp com cada nível
+        player["XP_MAX"] *= 1.5 # Aumenta a qtd necessária de xp com cada nível
         item_drop()
 
 def reset():
