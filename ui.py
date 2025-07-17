@@ -1,10 +1,11 @@
 import pygame
 import globals
+import utils
 import states.game as game
 from PPlay.gameimage import *
 from PPlay.sprite import *
 from player import player
-from player import item_list
+from player import player_items
 
 WHITE = (255,255,255)
 BLACK = (0,0,0)
@@ -16,6 +17,54 @@ FONTE = 'Tahoma'
 # "segunda camda" da UI, logo embaixo da barra de XP
 y_ui = 60  # 60 = barra_xp_height + 10 de padding
  
+def mostrar_drops(i1, i2, i3):
+    WINDOW = globals.WINDOW
+    centro_x = WINDOW.width // 2
+    centro_y = WINDOW.height // 2
+
+    x0 = centro_x - 300
+    y0 = centro_y - 300
+    pygame.draw.rect(WINDOW.get_screen(), BLACK, (x0, y0, 600, 600))
+    pygame.draw.rect(WINDOW.get_screen(), GRAY, (x0 + 10, y0 + 10, 580, 580))
+    
+    WINDOW.draw_text("SELECIONE UM ITEM:", x0 + 40, y0 + 30, size = 30, color=WHITE, font_name=FONTE, bold=True, italic=False)
+    PADDING = 20
+    SIZE = 165
+    BOXES_Y = y0 + 200
+
+    WINDOW.draw_text(i1["NAME"], x0 + 30, BOXES_Y - 30, size = 15, color=WHITE, font_name=FONTE, bold=True, italic=False)
+    pygame.draw.rect(WINDOW.get_screen(), BLACK, (x0 + 30, BOXES_Y, SIZE, SIZE))
+    pygame.draw.rect(WINDOW.get_screen(), WHITE, (x0 + 40, BOXES_Y + 10, SIZE - PADDING, SIZE - PADDING))
+    i1["BIG_ICON"].set_position(x0 + 40 + 5, BOXES_Y + 10 + 5)
+    i1["BIG_ICON"].draw()
+    WINDOW.draw_text(str(i1["EFFECT"]) + ' ' + i1["TYPE"], x0 + 30, BOXES_Y + SIZE + PADDING, size = 15, color=WHITE, font_name=FONTE, bold=True, italic=False)
+    
+
+    BOX2_X = x0 + 30 + SIZE + PADDING 
+    WINDOW.draw_text(i2["NAME"], BOX2_X, BOXES_Y - 30, size = 15, color=WHITE, font_name=FONTE, bold=True, italic=False)
+    pygame.draw.rect(WINDOW.get_screen(), BLACK, (BOX2_X, BOXES_Y, SIZE, SIZE))
+    pygame.draw.rect(WINDOW.get_screen(), WHITE, (BOX2_X + 10 , BOXES_Y + 10, SIZE - PADDING, SIZE - PADDING))
+    i2["BIG_ICON"].set_position(BOX2_X + 10 + 5, BOXES_Y + 10 + 5)
+    i2["BIG_ICON"].draw()
+    WINDOW.draw_text(str(i2["EFFECT"]) + ' ' + i2["TYPE"], BOX2_X, BOXES_Y + SIZE + PADDING, size = 15, color=WHITE, font_name=FONTE, bold=True, italic=False)
+
+    BOX3_X = x0 + 30 + 2*SIZE + 2*PADDING
+    WINDOW.draw_text(i3["NAME"], BOX3_X, BOXES_Y - 30, size = 15, color=WHITE, font_name=FONTE, bold=True, italic=False)
+    pygame.draw.rect(WINDOW.get_screen(), BLACK, (BOX3_X, BOXES_Y, SIZE, SIZE))
+    pygame.draw.rect(WINDOW.get_screen(), WHITE, (BOX3_X + 10, BOXES_Y + 10, SIZE - PADDING, SIZE - PADDING))
+    i3["BIG_ICON"].set_position(BOX3_X + 10 + 5, BOXES_Y + 10 + 5)
+    i3["BIG_ICON"].draw()
+    WINDOW.draw_text(str(i3["EFFECT"]) + ' ' + i3["TYPE"], BOX3_X, BOXES_Y + SIZE + PADDING, size = 15, color=WHITE, font_name=FONTE, bold=True, italic=False)
+
+    if utils.clicked(globals.MOUSE, i1["BIG_ICON"]):
+        return 1
+    elif utils.clicked(globals.MOUSE, i2["BIG_ICON"]):
+        return 2
+    elif utils.clicked(globals.MOUSE, i3["BIG_ICON"]):
+        return 3
+
+    WINDOW.update()
+
 def mostrar_cronometro(window): # Mostra na tela há quanto tempo o jogador iniciou a partida
     tempo_atual = pygame.time.get_ticks() - game.start_time
     segundos_decorridos = tempo_atual // 1000 # Converte em segundos
@@ -42,8 +91,10 @@ def mostrar_itens(janela): # Desenha os "contâiners" dos itens
     # SLOT 1
     pygame.draw.rect(janela.get_screen(), GRAY, (15, y_ui+5, 30, 30))
     # TODO: mudar esse set position ao adiconar o item ao player
-    item_list[0].set_position(30 - item_list[0].width/2, y_ui + 20 - item_list[0].height/2)
-    item_list[0].draw()
+
+    player_items[0]["ICON"].set_position(30 - player_items[0]["ICON"].width/2, 
+                                         y_ui + 20 - player_items[0]["ICON"].height/2)
+    player_items[0]["ICON"].draw()
 
     pygame.draw.rect(janela.get_screen(), GRAY, (50, y_ui+5, 30, 30))  # 10 + 5*2 + 30 = 50
     pygame.draw.rect(janela.get_screen(), GRAY, (85, y_ui+5, 30, 30))  # 10 + 5*3 + 30*2 = 85

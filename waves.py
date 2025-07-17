@@ -10,22 +10,19 @@ Esse módulo tem duas funções:
 import random
 import pygame
 import enemies
+from player import player
 
-WAVE_COOLDOWN = 4000 # ~~ 4 seg
+WAVE_COOLDOWN = 2000 # ~~ 2 seg
 last_wave = 0
 
 def auto_wave():
     global WAVE_COOLDOWN, last_wave
 
     if pygame.time.get_ticks() - last_wave > WAVE_COOLDOWN:
-        # Depois fazer o número de inimigos possíveis aumentar conforme o lvl do player(ou o tempo passado?)
-        n = random.randint(1,3)
+        n = random.randint(1*player["LEVEL"] + 1,2*player["LEVEL"] + 1)
 
         for _ in range(n):
-            # Depois fazer O Javali só spawnar a partir de x minutos, o mesmo para o caçador, para a dificuldade
-            # ir aumentando conforme o tempo
-            #enemies.spawn(random.choice(["JAVALI", "LENHADOR", "CACADOR"]))
-            enemies.spawn("LENHADOR")
+            enemies.spawn(random.choice(["JAVALI", "LENHADOR", "CACADOR"]))
 
         last_wave = pygame.time.get_ticks()
 

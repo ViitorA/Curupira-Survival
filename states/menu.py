@@ -19,26 +19,20 @@ def main_menu():
     play_button.set_position((WINDOW.width - BUTTON_WIDTH)/2, MEIO - BUTTON_HEIGHT - PADDING)
     play_button.draw()    
 
-    config_button = GameImage("assets/botao-configuracoes.png")
-    config_button.set_position((play_button.x)/2 - PADDING, MEIO)
-    config_button.draw()
+    bestiario_button = GameImage("assets/botao-bestiario.png")
+    bestiario_button.set_position((WINDOW.width - BUTTON_WIDTH)/2, MEIO)
+    bestiario_button.draw()
 
     exit_button = GameImage("assets/botao-sair.png")
     exit_button.set_position( (WINDOW.width - BUTTON_WIDTH)/2, MEIO + BUTTON_HEIGHT + PADDING)
     exit_button.draw()
 
-    bestiario_button = GameImage("assets/botao-bestiario.png")
-    bestiario_button.set_position((play_button.x)/2 + play_button.width + PADDING, MEIO)
-    bestiario_button.draw()
-
     if clicked(MOUSE, play_button):
         globals.current_state = "GAME"
-    elif clicked(MOUSE, config_button):
-        globals.current_state = "CONFIG"
-    elif clicked(MOUSE, exit_button):
-        WINDOW.close()
     elif clicked(MOUSE, bestiario_button):
         globals.current_state = "BESTIARIO"
+    elif clicked(MOUSE, exit_button):
+        WINDOW.close()
 
 def game_menu():
     WINDOW = globals.WINDOW
@@ -55,10 +49,6 @@ def game_menu():
     return_button = GameImage("assets/botao-voltar.png")
     return_button.set_position(MEIO_X, MEIO_Y - BUTTON_HEIGHT - PADDING)
     return_button.draw()
-    
-    config_button = GameImage("assets/botao-configuracoes.png")
-    config_button.set_position(MEIO_X, MEIO_Y)
-    config_button.draw()
 
     exit_button = GameImage("assets/botao-sair.png")
     exit_button.set_position( MEIO_X, MEIO_Y + BUTTON_HEIGHT + PADDING)
@@ -66,7 +56,5 @@ def game_menu():
 
     if clicked(MOUSE, return_button):
         globals.current_state = "GAME"
-    elif clicked(MOUSE, config_button):
-        globals.current_state = "CONFIG"
     elif clicked(MOUSE, exit_button):
         WINDOW.close()

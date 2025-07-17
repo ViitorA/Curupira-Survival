@@ -1,28 +1,31 @@
 from math import sqrt
 
 from PPlay.sprite import *
+from PPlay.gameimage import *
 from PPlay.mouse import *
-
+import ui
+import random
 import pygame
 import globals
 import states.game as game
 import objects
 
 player = {}
-item_list = []
+player_items = []
+
 VELOCIDADE = 250
 last_player_attack = 0
 
 def add_item(item):
-    if item == "FIREBALL":
-        item_list.append(Sprite("assets/fireball_icon.png"))
+    if item == "Bola De Fogo":
+        player_items.append(game.game_items[0])
 
 def spawn():
     WINDOW = globals.WINDOW
 
     player["HP"] = 100
     player["ATK"] = 1
-    player["ATK-COOLDOWN"] = 2500
+    player["ATK-COOLDOWN"] = 2000
     player["RES"] = 1 # Resistance
     player["SPD"] = 1
 
@@ -43,7 +46,7 @@ def spawn():
     # 0: Olhando p/a esquerda
     player["FACING_RIGHT"] = 1
 
-    add_item("FIREBALL")
+    add_item("Bola De Fogo")
 
 
 def input(KEYBOARD, MOUSE):
@@ -67,7 +70,7 @@ def input(KEYBOARD, MOUSE):
         player["SPRITE"].update()
         player["FACING_RIGHT"] = 1
 
-    if globals.manual_mode and MOUSE.is_button_pressed(1) and MOUSE.is_on_screen() and player["ATK-COOLDOWN"] < pygame.time.get_ticks() - last_player_attack:
+    if MOUSE.is_button_pressed(1) and MOUSE.is_on_screen() and player["ATK-COOLDOWN"] < pygame.time.get_ticks() - last_player_attack:
         alvo = MOUSE.get_position()
         player_x = player["SPRITE"].x
         player_y = player["SPRITE"].y
@@ -80,56 +83,41 @@ def input(KEYBOARD, MOUSE):
 
         last_player_attack = pygame.time.get_ticks()
 
+def item_drop():
+    global player, player_items
+    choice_list = game.game_items
+    
+    i1 = random.choice(choice_list)
+    i2 = random.choice(choice_list)
+    i3 = random.choice(choice_list)
+
+    while True:
+        user_choice = ui.mostrar_drops(i1,i2,i3)
+
+        if user_choice == 1:
+            player_items.append(i1)
+            # Limita todos os status a 100
+            player[i1["TYPE"]] = min(player[i1["TYPE"]] + i1["EFFECT"], 100)
+            break
+        elif user_choice == 2:
+            player_items.append(i2)
+            player[i2["TYPE"]] = min(player[i2["TYPE"]] + i2["EFFECT"], 100)
+            break
+        elif user_choice == 3:
+            player_items.append(i3)
+            player[i3["TYPE"]] = min(player[i3["TYPE"]] + i3["EFFECT"], 100)
+            break
+
 def update_info():
+    print(player["HP"])
     # Checa se já pode subir de level
     if player["XP"] >= player["XP_MAX"]:
         player["LEVEL"] += 1
         player["XP"] = player["XP_MAX"] - player["XP"]
         player["XP_MAX"] *= 2 # Dobra a qtd necessária de xp com cada nível
+        item_drop()
 
 def reset():
     global last_player_attack
     last_player_attack = 0
     player.clear()
-
-debug_mode = 0
-
-def auto_attack(enemies_list):
-    global last_player_attack
-
-    player_x = player["SPRITE"].x
-    player_y = player["SPRITE"].y
-    centro_player = [player_x + player["SPRITE"].width/2, player_y + player["SPRITE"].height/2]
-    
-    centro_inimigo_x = None
-    centro_inimigo_y = None
-    menor_distancia = float('inf')
-
-    if enemies_list != []:
-        # Se está em cooldown ainda, não faz nem sentido ter que calcular tudo isso
-        if player["ATK-COOLDOWN"] < pygame.time.get_ticks() - last_player_attack:
-            for enemy in enemies_list:
-                inimigo_x_corrigido = enemy["X"] - game.cam_offset[0]
-                inimigo_y_corrigido = enemy["Y"] - game.cam_offset[1]
-
-                centro_inimigo = [inimigo_x_corrigido + enemy["SPRITE"].width/2, inimigo_y_corrigido + enemy["SPRITE"].height/2]
-                # Distância de pontos: sqrt((x1-x0)^2 + (y1-y0)^2)
-                distancia = sqrt((centro_inimigo[0] - centro_player[0])**2 + (centro_inimigo[1] - centro_player[1])**2)
-
-                if distancia < menor_distancia:
-                    menor_distancia = distancia
-                    centro_inimigo_x = centro_inimigo[0]
-                    centro_inimigo_y = centro_inimigo[1]
-
-            objects.arrow_spawn(player_x + game.cam_offset[0], 
-                        player_y + game.cam_offset[1], 
-                        centro_inimigo_x + game.cam_offset[0], 
-                        centro_inimigo_y + game.cam_offset[1]
-                        )
-            last_player_attack = pygame.time.get_ticks()
-
-    if debug_mode:
-        WINDOW = globals.WINDOW
-        pygame.draw.rect(WINDOW.get_screen(), (0,255,0), (centro_player[0]-7, centro_player[1]-7, 14, 14))
-        if centro_inimigo_x != None:
-            pygame.draw.rect(WINDOW.get_screen(), (0,255,255), (centro_inimigo_x-7, centro_inimigo_y-7, 14, 14))

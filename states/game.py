@@ -1,5 +1,5 @@
 from PPlay.sprite import *
-from PPlay.collision import Collision
+from PPlay.gameimage import *
 from PPlay.sound import *
 
 from ui import desenhar_ui
@@ -10,13 +10,13 @@ import enemies
 import objects
 import waves
 from states.bestiario import atualizar_abates
+import random
 
 cam_offset = [0,0]
 
 is_running = False
 start_time = None  
 delta_t = None
-
 
 BG_MUSIC = Sound("assets/audio/bg1_the-gensokyo-the-gods-loved.mp3")
 music_playing = False
@@ -26,6 +26,8 @@ death_count = {
     "LENHADOR" : 0,
     "CACADOR" :0
 } 
+
+game_items = []
 
 def update_scenario(): 
     """
@@ -100,9 +102,12 @@ def collision_detection():
                                   )
 
                 if verificavel:
-                    # TODO: FAZER DETECTAR COLISÃO COM OS SPRITES VIRADOS P/A ESQUERDA
-                    print("VERIFICAVEL")
                     objects.drop_xp(enemy)
+
+                    # Chance de 10% de dropar comida
+                    if random.random() < 0.1:
+                        objects.spawn("Comida", enemy["SPRITE"].x + 10, enemy["SPRITE"].y + 10)
+
                     objects.objects_list.remove(object)
                     enemies.enemies_list.remove(enemy)
                     player.player["ENEMIES_KILLED"] += 1
@@ -121,8 +126,8 @@ def collision_detection():
                               )
             
             if verificavel and object["SPRITE"].collided_perfect(player_sprite):
-                print("HIT")
-                player.player["HP"] -= object["DAMAGE"]
+                dano = max(object["DAMAGE"] - player.player.get("RES", 0), 1)
+                player.player["HP"] -= dano
                 globals.HIT_SOUND.play()
                 objects.objects_list.remove(object)
             
@@ -132,6 +137,9 @@ def collision_detection():
                 player.player["XP"] += object["VALUE"]
                 globals.XP_SOUND.play()
                 objects.objects_list.remove(object)
+        elif object["TYPE"] == "Comida" and object["SPRITE"].collided(player_sprite):
+            player.player["HP"] = min(player.player["HP"] + 20, 100)
+            objects.objects_list.remove(object)
     
     for enemy in enemies.enemies_list:
         verificavel = True
@@ -146,11 +154,13 @@ def collision_detection():
 
         if verificavel and pygame.time.get_ticks() - enemy["LAST-ATK"] > enemy["ATK-COOLDOWN"]:
             if enemy["SPRITE"].collided_perfect(player_sprite):
-                player.player["HP"] -= enemy["ATK"]
+                dano = max(enemy["ATK"] - player.player.get("RES", 0), 1)
+                player.player["HP"] -= dano
                 globals.HIT_SOUND.play()
                 enemy["LAST-ATK"] = pygame.time.get_ticks()
 
 def separar_inimigos():
+    # Obs.: Dá pra otimizar
     for i, enemy_a in enumerate(enemies.enemies_list):
         rect_a = pygame.Rect(enemy_a["X"], 
                              enemy_a["Y"], 
@@ -172,15 +182,33 @@ def separar_inimigos():
                 dist = max((dx**2 + dy**2)**0.5, 1)
 
                 # Aplica uma pequena força para separar
-                force = 2  # ajuste conforme necessário
+                force = 1.5  # ajuste conforme necessário
                 enemy_a["X"] += (dx/dist) * force
                 enemy_a["Y"] += (dy/dist) * force
 
 def game_init():
-    global is_running, start_time, BG_MUSIC, music_playing
+    global is_running, start_time, BG_MUSIC, music_playing, game_items
     is_running = True
     start_time = pygame.time.get_ticks()
     
+    game_items = [
+        {"NAME": "Bola De Fogo", "TYPE": "ATK-COOLDOWN", "EFFECT": -20, 
+         "ICON": GameImage("assets/fireball_icon.png"), 
+         "BIG_ICON": GameImage("assets/fireball_bicon.png")},
+        
+        {"NAME": "Botas Mágicas", "EFFECT": 5, "TYPE": "SPD", 
+         "ICON": GameImage("assets/botas-magicas_icon.png"), 
+         "BIG_ICON": GameImage("assets/botas-magicas_icon2.png")}, 
+
+        {"NAME": "Armadura De Couro", "EFFECT": 10, "TYPE": "RES", 
+         "ICON": GameImage("assets/armadura-couro_icon.png"), 
+         "BIG_ICON": GameImage("assets/armadura-couro_bicon.png")},
+
+        {"NAME": "Comida", "EFFECT": 20, "TYPE": "HP", 
+         "ICON": GameImage("assets/comida.png"), 
+         "BIG_ICON": GameImage("assets/comida_bicon.png")}
+    ]
+
     player.spawn()
     cam_offset[0] = player.player["SPRITE"].x - globals.WINDOW.width // 2
     cam_offset[1] = player.player["SPRITE"].y - globals.WINDOW.height // 2
@@ -192,7 +220,7 @@ def game_init():
     globals.HIT_SOUND = Sound("assets/audio/hit.wav")
     globals.XP_SOUND = Sound("assets/audio/xp.wav")
 
-a = True
+
 def run():
     # P/a o código ficar menos verboso
     WINDOW = globals.WINDOW
@@ -218,12 +246,7 @@ def run():
     player.input(KEYBOARD, MOUSE)
     utils.draw_background(WINDOW, cam_offset)
 
-    #waves.auto_wave()
-    global a
-    if a:
-        enemies.spawn("JAVALI")
-        a = False
-
+    waves.auto_wave()
     collision_detection()
     update_scenario()
     separar_inimigos()
@@ -232,9 +255,7 @@ def run():
     player.update_info()
     utils.draw_sprite(player.player) 
 
-    if enemies.enemies_list != []:
-        if not globals.manual_mode: player.auto_attack(enemies.enemies_list)
-        enemies.think(cam_offset, delta_t)
+    if enemies.enemies_list != []: enemies.think(cam_offset, delta_t)
 
     desenhar_ui(player.player)
 

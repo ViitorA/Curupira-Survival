@@ -6,19 +6,15 @@ import player
 
 objects_list = []
 
-def spawn(type):
+def spawn(type, x, y):
     new_object = {
-        "TYPE": type.upper(),
-        "X": random.randint(0, 800), 
-        "Y": random.randint(0, 800),
+        "TYPE": type,
+        "X": x, 
+        "Y": y,
     }
     
-    if new_object["TYPE"] == "BAU":
-     new_object["SPRITE"] = Sprite("assets/bau.png")
-    elif new_object["TYPE"] == "COMIDA":
-     new_object["SPRITE"] = Sprite("assets/comida.png")
-    elif new_object["TYPE"] == "RELOGIO":
-     new_object["SPRITE"] = Sprite("assets/relogio.png")
+    if new_object["TYPE"] == "Comida":
+        new_object["SPRITE"] = Sprite("assets/comida.png")
 
     objects_list.append(new_object)
 
@@ -77,20 +73,15 @@ def fireball_spawn(player_x, player_y, target_x, target_y):
 
     angle = math.degrees(math.atan2(-dy,dx))
     
-    print(int(angle))
     spawn_pos_x = player_x
     spawn_pos_y = player_y
     if -45 < int(angle) < 45: # Spawna na direita do player
        spawn_pos_x += player_width//2 + 20
-       print("DIREITA")  
     elif 45 < int(angle) < 135: # Spawna em cima do player=
        spawn_pos_y -= player_height//2 + 20
-       print("CIMA")
     elif 135 < int(angle) < -135: # Spawna na esquerda do player
-       print("ESQUERDA")
        spawn_pos_x -= player_width//2 + 20
     elif -135 < int(angle) < -45: # Spawna embaixo do player
-       print("EMBAIXO")
        spawn_pos_y += player_height//2 + 20
 
     if distancia == 0: # Evita divisão por 0
