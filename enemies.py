@@ -6,13 +6,14 @@ from PPlay.sprite import *
 
 enemies_list = []
 
-def spawn(type):
-    x_left = random.randint(-200, -100)
-    #x_right = random.randint(window.width + 100, window.width + 200)
-    x_right = 900
-    y_up = random.randint(-200, -100)
-    #y_down = random.randint(window.height + 100, window.height + 200)
-    y_down = 900
+def spawn(type, cam_offset):
+    player_x = int(cam_offset[0])
+    player_y = int(cam_offset[1])
+
+    x_left = random.randint(player_x - 1200, player_x - 1000)
+    x_right = random.randint(player_x + 1000, player_x + 1200)
+    y_up = random.randint(player_y - 1200, player_y - 1000)
+    y_down = random.randint(player_y + 1000, player_y + 1200)
 
     new_enemy = {
         "TYPE": type.upper(),
@@ -25,7 +26,7 @@ def spawn(type):
     
     if new_enemy["TYPE"] == "JAVALI":
         new_enemy["HP"] = 150
-        new_enemy["ATK"] = 10
+        new_enemy["ATK"] = 15
         new_enemy["SPEED"] = 150
 
         new_enemy["SPRITE"] = Sprite("assets/javali.png", frames = 3)
@@ -37,7 +38,7 @@ def spawn(type):
         new_enemy["CHARGE_SPEED"] = 300
     elif new_enemy["TYPE"] == "LENHADOR":
         new_enemy["HP"] = 100
-        new_enemy["ATK"] = 5
+        new_enemy["ATK"] = 10
         new_enemy["SPEED"] = 100
         
         new_enemy["SPRITE"] = Sprite("assets/lenhador.png", frames = 3)

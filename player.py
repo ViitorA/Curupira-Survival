@@ -17,15 +17,46 @@ VELOCIDADE = 250
 last_player_attack = 0
 
 def add_item(item):
-    if item == "Bola De Fogo":
-        player_items.append(game.game_items[0])
+    print("OLD")
+    print("HP: " + str(player["HP"]))
+    print("ATK-COOLDOWN: " + str(player["ATK-COOLDOWN"]))
+    print("SPD: " + str(player["SPD"]))
+    print("RES: " + str(player["RES"]))
+
+    # Itens de comida não são equipáveis nem upgradáveis
+    if item["NAME"] == "Comida":
+        player["HP"] = min(player["HP"] + item["EFFECT"], 100)
+        return
+
+    # Verifica se o item já está no inventário
+    for inv_item in player_items:
+        if inv_item["NAME"] == item["NAME"]:
+            # Se já está, só faz o upgrade e não adiciona novamente no inventário
+            if item["NAME"] == "Bola De Fogo":
+                player[item["TYPE"]] = max(player[item["TYPE"]] + item["EFFECT"], 0)
+            else:
+                player[item["TYPE"]] = min(player[item["TYPE"]] + item["EFFECT"], 100)
+            return
+
+    # Se não está no inventário, adiciona e aplica efeito
+    player_items.append(item)
+    if item["NAME"] == "Bola De Fogo":
+        player[item["TYPE"]] = max(player[item["TYPE"]] + item["EFFECT"], 0)
+    else:
+        player[item["TYPE"]] = min(player[item["TYPE"]] + item["EFFECT"], 100)
+
+    print("NEW")
+    print("HP: " + str(player["HP"]))
+    print("ATK-COOLDOWN: " + str(player["ATK-COOLDOWN"]))
+    print("SPD: " + str(player["SPD"]))
+    print("RES: " + str(player["RES"]))
 
 def spawn():
     WINDOW = globals.WINDOW
 
     player["HP"] = 100
     player["ATK"] = 1
-    player["ATK-COOLDOWN"] = 2000
+    player["ATK-COOLDOWN"] = 1500
     player["RES"] = 1 # Resistance
     player["SPD"] = 1
 
@@ -46,7 +77,7 @@ def spawn():
     # 0: Olhando p/a esquerda
     player["FACING_RIGHT"] = 1
 
-    add_item("Bola De Fogo")
+    add_item(game.game_items[0]) # Adiciona bola de fogo
 
 
 def input(KEYBOARD, MOUSE):
@@ -87,32 +118,33 @@ def item_drop():
     global player, player_items
     choice_list = game.game_items
     
+    # Seleciona 3 itens diferentes para o drop
     i1 = random.choice(choice_list)
-    i2 = random.choice(choice_list)
-    i3 = random.choice(choice_list)
+    remaining_choices = [item for item in choice_list if item != i1]
+
+    i2 = random.choice(remaining_choices)
+    remaining_choices = [item for item in remaining_choices if item != i2]
+    
+    i3 = random.choice(remaining_choices)
 
     while True:
         user_choice = ui.mostrar_drops(i1,i2,i3)
 
         if user_choice == 1:
-            player_items.append(i1)
-            # Limita todos os status a 100
-            player[i1["TYPE"]] = min(player[i1["TYPE"]] + i1["EFFECT"], 100)
+            add_item(i1)
             break
         elif user_choice == 2:
-            player_items.append(i2)
-            player[i2["TYPE"]] = min(player[i2["TYPE"]] + i2["EFFECT"], 100)
+            add_item(i2)
             break
         elif user_choice == 3:
-            player_items.append(i3)
-            player[i3["TYPE"]] = min(player[i3["TYPE"]] + i3["EFFECT"], 100)
+            add_item(i3)
             break
 
 def update_info():
-    print(player["HP"])
     # Checa se já pode subir de level
     if player["XP"] >= player["XP_MAX"]:
         player["LEVEL"] += 1
+        player["ATK-COOLDOWN"] -= 5
         player["XP"] = player["XP_MAX"] - player["XP"]
         player["XP_MAX"] *= 2 # Dobra a qtd necessária de xp com cada nível
         item_drop()

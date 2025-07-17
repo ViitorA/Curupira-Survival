@@ -27,6 +27,7 @@ def mostrar_drops(i1, i2, i3):
     pygame.draw.rect(WINDOW.get_screen(), BLACK, (x0, y0, 600, 600))
     pygame.draw.rect(WINDOW.get_screen(), GRAY, (x0 + 10, y0 + 10, 580, 580))
     
+    # TODO: MELHORAR ESSE CÓDIGO HORRROSO
     WINDOW.draw_text("SELECIONE UM ITEM:", x0 + 40, y0 + 30, size = 30, color=WHITE, font_name=FONTE, bold=True, italic=False)
     PADDING = 20
     SIZE = 165
@@ -56,11 +57,14 @@ def mostrar_drops(i1, i2, i3):
     i3["BIG_ICON"].draw()
     WINDOW.draw_text(str(i3["EFFECT"]) + ' ' + i3["TYPE"], BOX3_X, BOXES_Y + SIZE + PADDING, size = 15, color=WHITE, font_name=FONTE, bold=True, italic=False)
 
-    if utils.clicked(globals.MOUSE, i1["BIG_ICON"]):
+    if globals.MOUSE.is_button_pressed(1) and globals.MOUSE.is_over_object(i1["BIG_ICON"]):
+        print("CLICOU 1")
         return 1
-    elif utils.clicked(globals.MOUSE, i2["BIG_ICON"]):
+    elif globals.MOUSE.is_button_pressed(1) and globals.MOUSE.is_over_object(i2["BIG_ICON"]):
+        print("CLICOU 2")
         return 2
-    elif utils.clicked(globals.MOUSE, i3["BIG_ICON"]):
+    elif globals.MOUSE.is_button_pressed(1) and globals.MOUSE.is_over_object(i3["BIG_ICON"]):
+        print("CLICOU 3")
         return 3
 
     WINDOW.update()
@@ -83,30 +87,36 @@ def mostrar_cronometro(window): # Mostra na tela há quanto tempo o jogador inic
     window.draw_text(cronometro, text_rect.x, y_ui, size = 40, color = WHITE, font_name = FONTE, bold = True, italic = False)
 
 def mostrar_itens(janela): # Desenha os "contâiners" dos itens
-    # Código temporário
+    global y_ui
+
     pygame.draw.rect(janela.get_screen(), BLACK, (10, y_ui, 30*5 + 5*6, 30*2 + 5*3))
     
-    # y_ui = 60
+    slot_width = 30
+    slot_height = 30
+    padding = 5
+    slots_per_row = 5
 
-    # SLOT 1
-    pygame.draw.rect(janela.get_screen(), GRAY, (15, y_ui+5, 30, 30))
-    # TODO: mudar esse set position ao adiconar o item ao player
+    # Itera sobre todos os itens do jogador para desenhar os slots e os ícones
+    for idx in range(len(player_items)):
+        # Calcula a linha e coluna do slot atual
+        row = idx // slots_per_row
+        col = idx % slots_per_row
 
-    player_items[0]["ICON"].set_position(30 - player_items[0]["ICON"].width/2, 
-                                         y_ui + 20 - player_items[0]["ICON"].height/2)
-    player_items[0]["ICON"].draw()
+        # Calcula a pos do desenho do slot na tela
+        x = 15 + col * (slot_width + padding)
+        y = y_ui + 5 + row * (slot_height + padding)
 
-    pygame.draw.rect(janela.get_screen(), GRAY, (50, y_ui+5, 30, 30))  # 10 + 5*2 + 30 = 50
-    pygame.draw.rect(janela.get_screen(), GRAY, (85, y_ui+5, 30, 30))  # 10 + 5*3 + 30*2 = 85
-    pygame.draw.rect(janela.get_screen(), GRAY, (120, y_ui+5, 30, 30)) # 10 + 5*4 + 30*3 = 120
-    pygame.draw.rect(janela.get_screen(), GRAY, (155, y_ui+5, 30, 30))  # 10 + 5*5 + 30*4 = 155
-
-    # SEGUNDA LINHA
-    pygame.draw.rect(janela.get_screen(), GRAY, (15,  y_ui+5*2 + 30, 30, 30))  
-    pygame.draw.rect(janela.get_screen(), GRAY, (50,  y_ui+5*2 + 30, 30, 30)) # y_ui + 5*2 + 30
-    pygame.draw.rect(janela.get_screen(), GRAY, (85,  y_ui+5*2 + 30, 30, 30))
-    pygame.draw.rect(janela.get_screen(), GRAY, (120, y_ui+5*2 + 30, 30, 30))
-    pygame.draw.rect(janela.get_screen(), GRAY, (155, y_ui+5*2 + 30, 30, 30))
+        # Desenha o retângulo do slot
+        pygame.draw.rect(janela.get_screen(), GRAY, (x, y, slot_width, slot_height))
+        
+        item = player_items[idx]
+        if item is not None:
+            # Centraliza
+            icon_x = x + slot_width // 2 - item["ICON"].width // 2
+            icon_y = y + slot_height // 2 - item["ICON"].height // 2
+            
+            item["ICON"].set_position(icon_x, icon_y)
+            item["ICON"].draw()
 
 def desenhar_barra_xp(janela):
     WINDOW = globals.WINDOW

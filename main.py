@@ -1,10 +1,3 @@
-# TODO LIST:
-# TODO: otimizar a detecção de colisão de projéteis igual o do space invaders
-# TODO: Adicionar som de HP
-# BUGS CONHECIDOS:
-# - inimigos spawnando na tua frente, eles spawnam em coordenadas fixas, ajuste para coordenadas a partir do 
-# player
-
 from PPlay.window import *
 from PPlay.sound import *
 

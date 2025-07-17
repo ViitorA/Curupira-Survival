@@ -15,14 +15,14 @@ from player import player
 WAVE_COOLDOWN = 2000 # ~~ 2 seg
 last_wave = 0
 
-def auto_wave():
+def auto_wave(cam_offset):
     global WAVE_COOLDOWN, last_wave
 
     if pygame.time.get_ticks() - last_wave > WAVE_COOLDOWN:
         n = random.randint(1*player["LEVEL"] + 1,2*player["LEVEL"] + 1)
 
         for _ in range(n):
-            enemies.spawn(random.choice(["JAVALI", "LENHADOR", "CACADOR"]))
+            enemies.spawn(random.choice(["JAVALI", "LENHADOR", "CACADOR"]), cam_offset)
 
         last_wave = pygame.time.get_ticks()
 

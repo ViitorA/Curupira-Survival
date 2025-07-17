@@ -160,31 +160,25 @@ def collision_detection():
                 enemy["LAST-ATK"] = pygame.time.get_ticks()
 
 def separar_inimigos():
-    # Obs.: Dá pra otimizar
-    for i, enemy_a in enumerate(enemies.enemies_list):
-        rect_a = pygame.Rect(enemy_a["X"], 
-                             enemy_a["Y"], 
-                             enemy_a["SPRITE"].width, 
-                             enemy_a["SPRITE"].height)
-        for j, enemy_b in enumerate(enemies.enemies_list):
-            # Verifica se é o mesmo inimigo
-            if i == j:
-                continue
-            rect_b = pygame.Rect(enemy_b["X"], 
-                                 enemy_b["Y"], 
-                                 enemy_b["SPRITE"].width, 
-                                 enemy_b["SPRITE"].height)
-            
+    # Otimizado: evita pares repetidos e reduz cálculos desnecessários
+    n = len(enemies.enemies_list)
+    force = 1.5  # ajuste conforme necessário
+    for i in range(n):
+        enemy_a = enemies.enemies_list[i]
+        rect_a = pygame.Rect(enemy_a["X"], enemy_a["Y"], enemy_a["SPRITE"].width, enemy_a["SPRITE"].height)
+        for j in range(i + 1, n):
+            enemy_b = enemies.enemies_list[j]
+            rect_b = pygame.Rect(enemy_b["X"], enemy_b["Y"], enemy_b["SPRITE"].width, enemy_b["SPRITE"].height)
             if rect_a.colliderect(rect_b):
-                # Calcula direção de separação
                 dx = rect_a.centerx - rect_b.centerx
                 dy = rect_a.centery - rect_b.centery
                 dist = max((dx**2 + dy**2)**0.5, 1)
-
-                # Aplica uma pequena força para separar
-                force = 1.5  # ajuste conforme necessário
-                enemy_a["X"] += (dx/dist) * force
-                enemy_a["Y"] += (dy/dist) * force
+                sep_x = (dx / dist) * force * 0.5
+                sep_y = (dy / dist) * force * 0.5
+                enemy_a["X"] += sep_x
+                enemy_a["Y"] += sep_y
+                enemy_b["X"] -= sep_x
+                enemy_b["Y"] -= sep_y
 
 def game_init():
     global is_running, start_time, BG_MUSIC, music_playing, game_items
@@ -192,7 +186,7 @@ def game_init():
     start_time = pygame.time.get_ticks()
     
     game_items = [
-        {"NAME": "Bola De Fogo", "TYPE": "ATK-COOLDOWN", "EFFECT": -20, 
+        {"NAME": "Bola De Fogo", "TYPE": "ATK-COOLDOWN", "EFFECT": -100, 
          "ICON": GameImage("assets/fireball_icon.png"), 
          "BIG_ICON": GameImage("assets/fireball_bicon.png")},
         
@@ -200,7 +194,7 @@ def game_init():
          "ICON": GameImage("assets/botas-magicas_icon.png"), 
          "BIG_ICON": GameImage("assets/botas-magicas_icon2.png")}, 
 
-        {"NAME": "Armadura De Couro", "EFFECT": 10, "TYPE": "RES", 
+        {"NAME": "Armadura De Couro", "EFFECT": 50, "TYPE": "HP", 
          "ICON": GameImage("assets/armadura-couro_icon.png"), 
          "BIG_ICON": GameImage("assets/armadura-couro_bicon.png")},
 
@@ -246,7 +240,7 @@ def run():
     player.input(KEYBOARD, MOUSE)
     utils.draw_background(WINDOW, cam_offset)
 
-    waves.auto_wave()
+    waves.auto_wave(cam_offset)
     collision_detection()
     update_scenario()
     separar_inimigos()
