@@ -27,6 +27,7 @@ death_count = {
     "CACADOR" :0
 } 
 
+# É uma lista com o dicionário de cada item do jogo, é inicializado no init()
 game_items = []
 
 def update_scenario(): 
@@ -51,18 +52,8 @@ def draw_scenario():
     """
     for object in objects.objects_list:
         object["SPRITE"].set_position(object["X"] - cam_offset[0], object["Y"] - cam_offset[1])
-
-        if object["TYPE"] == "ARROW":
-            sprite = object["SPRITE"]
-
-            rotated_surface = object["ROTATED_SURFACE"]
-            rect = rotated_surface.get_rect(center=(sprite.x, sprite.y))
-
-            globals.WINDOW.get_screen().blit(rotated_surface, rect)
-        elif object["TYPE"] == "FIREBALL":
-            object["SPRITE"].update()
-            object["SPRITE"].draw()
-        elif object["TYPE"] == "XP":
+        
+        if object["TYPE"] == "FIREBALL" or object["TYPE"] == "XP": # Possuem animação
             object["SPRITE"].update()
             object["SPRITE"].draw()
         else:
@@ -160,19 +151,34 @@ def collision_detection():
                 enemy["LAST-ATK"] = pygame.time.get_ticks()
 
 def separar_inimigos():
-    # Otimizado: evita pares repetidos e reduz cálculos desnecessários
+    # TODO: Otimizar isso mais se possível
+
     n = len(enemies.enemies_list)
     force = 1.5  # ajuste conforme necessário
+    
     for i in range(n):
-        enemy_a = enemies.enemies_list[i]
-        rect_a = pygame.Rect(enemy_a["X"], enemy_a["Y"], enemy_a["SPRITE"].width, enemy_a["SPRITE"].height)
+        enemy_a = enemies.enemies_list[i] # Primeiro inimigo
+        a_sprite = enemy_a["SPRITE"]
+        
+        # Calcula o centro do sprite A
+        enemy_a_centerx = a_sprite.x + a_sprite.width/2
+        enemy_a_centery = a_sprite.y + a_sprite.height/2
+
         for j in range(i + 1, n):
-            enemy_b = enemies.enemies_list[j]
-            rect_b = pygame.Rect(enemy_b["X"], enemy_b["Y"], enemy_b["SPRITE"].width, enemy_b["SPRITE"].height)
-            if rect_a.colliderect(rect_b):
-                dx = rect_a.centerx - rect_b.centerx
-                dy = rect_a.centery - rect_b.centery
+            enemy_b = enemies.enemies_list[j] # Segundo inimigo
+            b_sprite = enemy_b["SPRITE"]
+
+            # Calcula o centro do sprite B
+            enemy_b_centerx = b_sprite.x + b_sprite.width/2
+            enemy_b_centery = b_sprite.y + b_sprite.height/2
+
+            if a_sprite.collided(b_sprite):
+                # Caso tenham colidido, calcula a distância
+                dx = enemy_a_centerx - enemy_b_centerx
+                dy = enemy_a_centery - enemy_b_centery
                 dist = max((dx**2 + dy**2)**0.5, 1)
+
+                # Aplica a força de separação
                 sep_x = (dx / dist) * force * 0.5
                 sep_y = (dy / dist) * force * 0.5
                 enemy_a["X"] += sep_x
@@ -262,6 +268,7 @@ def run():
         globals.current_state = "GAME_OVER"
 
 def reset_game_vars():
+    # Reseta as variáveis do jogo para o estado inicial
     global is_running, start_time, delta_t, cam_offset
     is_running = False
     start_time = None
