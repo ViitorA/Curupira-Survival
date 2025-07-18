@@ -246,7 +246,7 @@ def run():
     player.input(KEYBOARD, MOUSE)
     utils.draw_background(WINDOW, cam_offset)
 
-    waves.auto_wave(cam_offset)
+    waves.auto_wave(cam_offset, delta_t)
     collision_detection()
     update_scenario()
     separar_inimigos()

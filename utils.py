@@ -5,18 +5,6 @@ from PPlay.gameimage import *
 DELAY_ENTRE_CLIQUES = 300
 ultimo_clique = 0
 
-def draw_version(window):
-    game_version = "ALPHA VERSION"
-
-    window.draw_text(game_version, 
-                     5, 
-                     window.height - 30, 
-                     size = 25, 
-                     color = (255,255,255), 
-                     font_name = 'Tahoma', 
-                     bold = False, 
-                     italic = False)
-
 def clicked(mouse, button):
     global ultimo_clique, DELAY_ENTRE_CLIQUES
 
@@ -27,9 +15,11 @@ def clicked(mouse, button):
     return clicou
 
 def draw_sprite(object):
-    if (object["FACING_RIGHT"]):
+    if (object["FACING_RIGHT"]): # Quando o sprite está do jeito que tá nos sprites é mais fácil
         object["SPRITE"].draw()
     else:
+        # Poderia ter copiado e colado o desenho invertido de cada sprite, mas fiz isso por ser mais 
+        # interessante e escalável
         sprite = object["SPRITE"]
         sprite_width = sprite.width
         sprite_height = sprite.height
@@ -38,7 +28,11 @@ def draw_sprite(object):
 
         # Recorta o frame atual
         frame_surface = image.subsurface(pygame.Rect(curr_frame * sprite_width, 0, sprite_width, sprite_height))
+        
+        # Gira horizontalmente o frame recortado
         flipped_surface = pygame.transform.flip(frame_surface, True, False)
+        
+        # Desenha na tela
         globals.WINDOW.get_screen().blit(flipped_surface, (sprite.x, sprite.y))
 
 def draw_background(window, cam_offset):

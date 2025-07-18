@@ -8,30 +8,31 @@ Esse módulo tem duas funções:
 """
 
 import random
-import pygame
 import enemies
 from player import player
 
-WAVE_COOLDOWN = 2000 # ~~ 2 seg
-last_wave = 0
+WAVE_COOLDOWN = 2.0 # 2 Segundos
+wave_timer = 0.0
 
-def auto_wave(cam_offset):
-    global WAVE_COOLDOWN, last_wave
+def auto_wave(cam_offset, delta_t):
+    global WAVE_COOLDOWN, wave_timer
 
-    if pygame.time.get_ticks() - last_wave > WAVE_COOLDOWN:
+    wave_timer += delta_t
+
+    if wave_timer >= WAVE_COOLDOWN:
+        wave_timer = 0.0
+
         n = None
-        if player["LEVEL"] == 0:
+        if player["LEVEL"] == 0: # Level 0 (1-2 inimigos)
             n = random.randint(1, 2)
-        elif player["LEVEL"] == 1:
+        elif player["LEVEL"] == 1: # Level 1 (2-3 inimigos)
             n = random.randint(2,3)
-        else:
-            n = random.randint(2,4)
+        else: # >= Level 2 (2-4 inimigos)
+            n = random.randint(2,4) 
 
         for _ in range(n):
             enemies.spawn(random.choice(["JAVALI", "LENHADOR", "CACADOR"]), cam_offset)
 
-        last_wave = pygame.time.get_ticks()
-
 def reset():
-    global last_wave
-    last_wave = 0
+    global wave_timer
+    wave_timer = 0.0
